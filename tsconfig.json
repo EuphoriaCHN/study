@@ -1,11 +1,32 @@
 {
   "compilerOptions": {
-    "module": "System",
-    "noImplicitAny": true,
+    "allowUnreachableCode": true,
+    "allowUnusedLabels": false,
+    "alwaysStrict": false,
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "sourceMap": true,
+    "module": "CommonJS",
+    "noImplicitAny": false,
     "removeComments": true,
-    "preserveConstEnums": true,
-    "outFile": "./dist/index.js",
-    "sourceMap": true
+    "types": [
+      "node"
+    ],
+    "paths": {},
+    "target": "ESNext",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "allowJs": true,
+    "lib": [ // 编译过程中需要引入的库文件的列表
+      "es5",
+      "es2015",
+      "es2016",
+      "es2017",
+      "es2018",
+      "dom"
+    ]
   },
   "include": [
     "**/*"

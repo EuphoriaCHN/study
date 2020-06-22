@@ -8,7 +8,12 @@
   },
   "scripts": {
     "ts": "node_modules/.bin/ts-node",
-    "tsc": "node_modules/.bin/tsc"
+    "tsc": "node_modules/.bin/tsc",
+
+    "ts:cp:1.0": "node_modules/.bin/ts-node ./CompilingPrinciple/1.0/index.ts",
+    "ts:cp:1.1": "node_modules/.bin/ts-node ./CompilingPrinciple/1.1/index.ts",
+    "ts:cp:1.2": "node_modules/.bin/ts-node ./CompilingPrinciple/1.2/index.ts",
+    "ts:cp:1.3": "node_modules/.bin/ts-node ./CompilingPrinciple/1.3/index.ts"
   },
   "repository": {
     "type": "git",

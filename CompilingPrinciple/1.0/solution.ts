@@ -5,12 +5,6 @@ export const getReversePolishExpression = (value: string): string => {
   const numberQueue: Array<string> = []; // 数字队列
   const operatorStack: Array<string> = []; // 运算符栈
 
-  // 维护符号栈和数字队列的 push 次数
-  // 因为加减乘除都是二元运算符，不计括号
-  // 那么数字队列的数字入队次数将会永远比符号栈的入栈次数多 1
-  let numberQueuePushCounter = 0;
-  let operatorStackPushCounter = 0;
-
   value = value.trim(); // 忽略首尾空格
 
   // 遍历 value
@@ -31,7 +25,6 @@ export const getReversePolishExpression = (value: string): string => {
     if (numberBuffer.length) {
       numberQueue.push(numberBuffer.join(''));
       numberBuffer = [];
-      numberQueuePushCounter++; // 为一整个数字增加一次入队次数
     }
     if (!operatorStack.length) {
       // 符号栈为空，压栈即可
@@ -42,9 +35,6 @@ export const getReversePolishExpression = (value: string): string => {
     if (v === '(' || v === '*' || v === '/') {
       // 左括号、乘除号可以直接入栈
       operatorStack.push(v);
-      if (v !== '(') {
-        operatorStackPushCounter++;
-      }
       return;
     }
     const operatorStackTop = operatorStack[operatorStack.length - 1]; // 找到符号栈顶元素
@@ -60,7 +50,6 @@ export const getReversePolishExpression = (value: string): string => {
       // 然后再将当前符号入符号栈
       numberQueue.push(operatorStack.pop());
       operatorStack.push(v);
-      operatorStackPushCounter++; // 只为新增的符号增加入栈次数
       return;
     }
     // 右括号，需要一直出符号栈至数字队列内，直至遇到左括号
@@ -79,10 +68,6 @@ export const getReversePolishExpression = (value: string): string => {
   // 最后一位一定是数字，
   if (numberBuffer.length) {
     numberQueue.push(numberBuffer.join(''));
-  }
-
-  if (numberQueuePushCounter - 1 !== operatorStackPushCounter) {
-    throw new Error('数字和符号个数不匹配！');
   }
 
   // 最后将所有符号栈内的元素，依次出栈至数字队列内

@@ -14,7 +14,7 @@
     }
 
     // 维护 NODE 数据自增 id，同时作为 node 主键标示
-    let nodeId = 1;
+    let nodeId = 0;
 
     // 维护常量组
     const EPSILON = 'ε'; // 空
@@ -179,28 +179,53 @@
     addNode(start, end);
     addEdge(startToOriginEdge, originToEnd);
 
-    return { nodes: Object.values(nodes), edges: Object.values(edges) };
+    const graphNodes = Object.values(nodes);
+    const graphEdges = Object.values(edges);
+
+    // 计算图的邻接矩阵
+    const adjacencyMatrix = {};
+    graphNodes.forEach(v => {
+      const initRows = {};
+      graphNodes.forEach(v => {
+        initRows[v.id] = null;
+      });
+      adjacencyMatrix[v.id] = initRows;
+    });
+
+    graphEdges.forEach(edges => {
+      const { from, to, label } = edges;
+      if (!adjacencyMatrix[from][to]) {
+        adjacencyMatrix[from][to] = [];
+      }
+      adjacencyMatrix[from][to].push(label);
+    });
+
+    return { nodes: graphNodes, edges: graphEdges, adjacencyMatrix };
   };
 
   const main = () => {
     const inputElement = $('#input');
     const submitButton = $('#submit');
 
-    // Canvas 画布
-    const container = document.getElementById('network');
-    const network = new vis.Network(container, { nodes: [], edges: [] }, {});
+    if (window.vis) {
+      // Canvas 画布
+      const container = document.getElementById('network');
+      const network = new vis.Network(container, { nodes: [], edges: [] }, {});
 
-    submitButton.on('click', () => {
-      const value = inputElement.val();
-      inputElement.val('');
+      submitButton.on('click', () => {
+        const value = inputElement.val();
+        inputElement.val('');
 
-      // 获得后缀表达式
-      const reversePolishExpression = window.getRegExpReversePolishExpression(value);
+        // 获得后缀表达式
+        const reversePolishExpression = window.getRegExpReversePolishExpression(value);
 
-      const { nodes, edges } = getNFAGraph(reversePolishExpression);
-      network.setData({ nodes, edges });
-      network.redraw();
-    });
+        const { nodes, edges } = getNFAGraph(reversePolishExpression);
+        network.setData({ nodes, edges });
+        network.redraw();
+      });
+    }
+
+    window.getNFAGraph = getNFAGraph; // 模块导出
   };
 
   window.addEventListener('load', main);

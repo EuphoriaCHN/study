@@ -46,7 +46,8 @@
           }
         }
         operatorStack.pop(); // 弹出 (
-        unionFlag = true; // 下一个如果是终结符，一定是并运算
+        operatorStack.push('.');
+        unionFlag = false; // 直接就加上并运算，万一没有下个了呢？
         return;
       }
       // 终结符组合
@@ -146,20 +147,26 @@
   };
 
   const main = () => {
-    const chart = new Treant(TreeConfig, null, $);
+    if (window.Treant) {
+      const chart = new Treant(TreeConfig, null, $);
 
-    const input = $('#input');
-    const submit = $('#submit');
+      const input = $('#input');
+      const submit = $('#submit');
 
-    submit.on('click', () => {
-      const value = input.val();
-      input.val('');
+      submit.on('click', () => {
+        const value = input.val();
+        input.val('');
 
-      const regExpReversePolishExpression = getRegExpReversePolishExpression(value);
+        const regExpReversePolishExpression = getRegExpReversePolishExpression(value);
 
-      TreeConfig.nodeStructure = makeTree(regExpReversePolishExpression);
-      chart.tree.reload();
-    });
+        TreeConfig.nodeStructure = makeTree(regExpReversePolishExpression);
+        chart.tree.reload();
+      });
+    }
+
+    // 模块导出
+    window.makeAST = makeTree;
+    window.getRegExpReversePolishExpression = getRegExpReversePolishExpression;
   };
 
   window.addEventListener('load', main);

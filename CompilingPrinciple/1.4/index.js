@@ -23,12 +23,18 @@
     // 维护一个 flag，判断是否是并集运算
     let unionFlag = false;
 
+    // 维护一个 flag，如果出现开头就是 ( 的情况，则在处理完 ) 后不需要进行并集操作
+    let firstSemi = true;
+
     // 遍历输入数据
     input.split('').forEach((v, index) => {
       if (v === '(' || v === '|') {
         // 普通运算符，直接可以入栈
         unionFlag = false; // 不是连续出现的终结符组合
         operatorStack.push(v);
+        if (firstSemi && v === '(' && Boolean(alphaQueue.length)) {
+          firstSemi = false;
+        }
         return;
       }
       if (v === '*') {
@@ -46,17 +52,21 @@
           }
         }
         operatorStack.pop(); // 弹出 (
-        operatorStack.push('.');
-        unionFlag = false; // 直接就加上并运算，万一没有下个了呢？
+        if (!firstSemi && !operatorStack.length) {
+          // 在加入刚刚弹出的 ( 之前，在 alphaQueue 中已经有元素了
+          // 并且当前符号栈顶不是任何一个操作符时，需要立即增加一个 cat
+          alphaQueue.push('.');
+        }
+        unionFlag = true; // 如果下一个输入的是符号，则需要 cat
         return;
       }
       // 终结符组合
+      alphaQueue.push(v);
       if (unionFlag) {
         // 当前的终结符相对于上一个组合是并运算
-        operatorStack.push('.');
+        alphaQueue.push('.');
       }
       unionFlag = true; // 下一个如果是终结符，一定是并运算
-      alphaQueue.push(v);
     });
 
     // 出操作符栈，直至栈空
@@ -147,7 +157,7 @@
   };
 
   const main = () => {
-    if (window.Treant) {
+    if (window.Treant && !window.unallowed14) {
       const chart = new Treant(TreeConfig, null, $);
 
       const input = $('#input');

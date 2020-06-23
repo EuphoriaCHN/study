@@ -207,7 +207,7 @@
     const inputElement = $('#input');
     const submitButton = $('#submit');
 
-    if (window.vis) {
+    if (window.vis && !window.unallowed15) {
       // Canvas 画布
       const container = document.getElementById('network');
       const network = new vis.Network(container, { nodes: [], edges: [] }, {});

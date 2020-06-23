@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #network {
+      height: 600px;
+      width: 100%;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <input type="text" placeholder="请输入正则表达式" id="input" />
+    <input type="button" id="submit" value="生成 NFA" />
+  </div>
+  <div id="network"></div>
+
+  <script src="../../lib/jquery-3.5.1.min.js"></script>
+  <script src="../../lib/vis/vis-network.min.js"></script>
+  <script src="../1.4/index.js"></script>
+  <script src="./index.js"></script>
+</body>
+
+</html>

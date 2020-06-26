@@ -86,8 +86,11 @@
     // children[1] 永远为右子树
     const stack = [];
 
+    // 运算符
+    const OPERATOR = ['*', '.', '|'];
+
     value.split('').forEach(v => {
-      if (v !== '*' && v !== '.' && v !== '|') {
+      if (!OPERATOR.includes(v)) {
         // 不是运算符，直接入栈
         stack.push({ text: v, children: [] });
         return;
@@ -95,53 +98,22 @@
 
       // 如果是 * 单目运算符，出栈一个就好
       if (v === '*') {
-        const virtualRoot = stack.pop();
+        const vRoot = stack.pop();
         stack.push({
           text: v,
-          children: [virtualRoot],
+          children: [vRoot],
         });
         return;
       }
 
       // 是运算符，出栈两个元素
-      const virtualRoot = stack.pop();
-      const leftJoinTree = stack.pop();
+      const rightJoinTree = stack.pop(); // 第一个元素应当是新的右子树
+      const leftJoinTree = stack.pop(); // 第二个元素应当是新的左子树
 
-      // 拿到 virtualRoot 的最左子树
-      let minLeftChildInVirtualRoot = virtualRoot.children[0];
-      do {
-        if (!minLeftChildInVirtualRoot || !minLeftChildInVirtualRoot.children.length) {
-          // 这就是最左
-          break;
-        }
-        minLeftChildInVirtualRoot = minLeftChildInVirtualRoot.children[0];
-      } while (true);
-
-      // 如果最左子树一开始就不存在（需要作为右子树的是一个单节点）
-      if (!minLeftChildInVirtualRoot) {
-        // 直接构造一颗树就好
-        stack.push({
-          text: v,
-          children: [
-            { text: leftJoinTree.text, children: [] },
-            { text: virtualRoot.text, children: [] },
-          ],
-        });
-        return;
-      }
-
-      // 获取旧的最左子树值
-      const minLeftChildInVirtualRootValue = minLeftChildInVirtualRoot.text;
-      // 将运算符赋值给最左子树
-      minLeftChildInVirtualRoot.text = v;
-
-      // 将 leftJoinTree 整体作为最左子树的左子树
-      minLeftChildInVirtualRoot.children.push(leftJoinTree);
-      // 将旧的最左子树值作为一颗新的右子树
-      minLeftChildInVirtualRoot.children.push({ text: minLeftChildInVirtualRootValue, children: [] });
-
-      // 重新入栈
-      stack.push(virtualRoot);
+      stack.push({
+        text: v,
+        children: [leftJoinTree, rightJoinTree],
+      });
     });
 
     if (stack.length !== 1) {
